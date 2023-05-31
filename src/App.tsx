@@ -1,7 +1,12 @@
 import './App.css'
+import { Outlet } from 'react-router-dom'
 
 function App() {
-  return <>Prueba Tecnica React</>
+  return (
+    <>
+      <Outlet />
+    </>
+  )
 }
 
 export default App
