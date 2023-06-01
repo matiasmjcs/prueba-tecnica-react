@@ -10,14 +10,16 @@ const Book = () => {
         return data
     }
 
-    const { isLoading } = useQuery({
+    const { data, isLoading } = useQuery({
       queryKey: [params.name],
       queryFn: getBooks,
     })
 
     if (isLoading) return <div>Loading ...</div>
     return (
-        <div>Rutas dinamicas</div>
+        <div>
+            <h1>{data?.name ?? ''}</h1>
+        </div>
     )
 }
 export default Book

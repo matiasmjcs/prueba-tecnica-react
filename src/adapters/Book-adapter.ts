@@ -18,19 +18,33 @@ export class BookAdapter implements BookAdapterInterface {
     }))
   }
 
-  bookResponse(response :Book[]): Book {
-    return {
-      url: response[0].url,
-      isbn: response[0].isbn,
-      name: response[0].name,
-      numberOfPages: response[0].numberOfPages,
-      authors: response[0].authors,
-      country: response[0].country,
-      publisher: response[0].publisher,
-      released: response[0].released,
-      mediaType: response[0].mediaType,
-      povCharacters: response[0].povCharacters,
-      characters: response[0].characters,
-    }
+  bookResponse([book]: Book[]): Book {
+     const {
+       url,
+       isbn,
+       name,
+       numberOfPages,
+       authors,
+       country,
+       publisher,
+       released,
+       mediaType,
+       povCharacters,
+       characters,
+     } = book
+
+     return {
+       url,
+       isbn,
+       name,
+       numberOfPages,
+       authors,
+       country,
+       publisher,
+       released,
+       mediaType,
+       povCharacters,
+       characters,
+     }
   }
 }

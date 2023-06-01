@@ -1,3 +1,5 @@
+import { MouseEventHandler } from "react"
+
 export interface Book {
   url: string
   name: string
@@ -10,4 +12,10 @@ export interface Book {
   released: string
   characters: string[]
   povCharacters: string[]
+}
+
+export interface BookTable extends Book {
+  view?: string
+  favorite?: () => MouseEventHandler<HTMLButtonElement> | undefined
+  removeFavorite?: () => MouseEventHandler<HTMLButtonElement> | undefined
 }
