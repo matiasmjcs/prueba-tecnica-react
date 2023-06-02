@@ -3,6 +3,7 @@ import App from '../App.tsx'
 import Home from '../pages/Home.tsx'
 import Book from '../pages/Book.tsx'
 import Favorites from '../pages/Favorites.tsx'
+import AddBook from '../pages/AddBook.tsx'
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -19,6 +20,10 @@ export const router = createBrowserRouter([
       {
         path: '/favorites',
         element: <Favorites />,
+      },
+      {
+        path: '/add_book',
+        element: <AddBook />,
       },
     ],
   },

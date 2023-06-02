@@ -3,6 +3,9 @@ import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  PaginationState,
 } from '@tanstack/react-table'
 import { Book, BookTable } from '../../models/IBook'
 import { NavLink } from 'react-router-dom'
@@ -10,12 +13,12 @@ import { NavLink } from 'react-router-dom'
 import { removeFavorites } from '../../app/favorites-book-reducer/favorites-book-reducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { StoreReducer } from '../../app/store'
+import { FcLike } from 'react-icons/fc'
+import { useEffect, useMemo, useState } from 'react'
 
 export const FavoritesTable = () => {
   const dispatch = useDispatch()
    const count: Book[] = useSelector((state: StoreReducer) => state.favorites)
-
-  const dataList: Book[] = []
 
   const columnHelper = createColumnHelper<BookTable | Book>()
 
@@ -62,18 +65,44 @@ export const FavoritesTable = () => {
         const value: Book = info.row.original
         return (
           <button onClick={() => dispatch(removeFavorites(value))}>
-            remove
+            <FcLike/>
           </button>
         )
       },
     }),
   ]
 
+  const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  })
+
+  const pagination = useMemo(
+    () => ({
+      pageIndex,
+      pageSize,
+    }),
+    [pageIndex, pageSize]
+  )
+
   const table = useReactTable({
-    data: count ?? dataList,
+    data: count,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    debugTable: true,
+    state: {
+      pagination,
+    },
+    onPaginationChange: setPagination,
   })
+
+  useEffect(() => {
+    table.setPageSize(4)
+  }, [table])
+  
+
 
   if (!count) return <div>Loading...</div>
   return (
@@ -110,6 +139,20 @@ export const FavoritesTable = () => {
           ))}
         </tbody>
       </table>
+      <button
+        className="border rounded p-1"
+        onClick={() => table.previousPage()}
+        disabled={!table.getCanPreviousPage()}
+      >
+        {'<'}
+      </button>
+      <button
+        className="border rounded p-1"
+        onClick={() => table.nextPage()}
+        disabled={!table.getCanNextPage()}
+      >
+        {'>'}
+      </button>
     </div>
   )
 }
