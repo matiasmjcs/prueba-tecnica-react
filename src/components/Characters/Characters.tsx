@@ -1,73 +1,51 @@
+import { useQuery } from '@tanstack/react-query'
 import {
-  useReactTable,
   createColumnHelper,
-  flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
+  useReactTable,
   PaginationState,
+  flexRender,
 } from '@tanstack/react-table'
-import { Book, BookTable } from '../../models/IBook'
-import { NavLink } from 'react-router-dom'
+import {  useEffect, useMemo, useState } from 'react'
+import { Character } from '../../models/ICharacter';
+import { getCharacter } from '../../services/Characters-api/Characters-api'
 
-import { removeFavorites } from '../../redux/favorites-book-reducer/favorites-book-reducer'
-import { useDispatch, useSelector } from 'react-redux'
-import { StoreReducer } from '../../redux/store'
-import { FcLike } from 'react-icons/fc'
-import { useEffect, useMemo, useState } from 'react'
+interface Props {
+  data: string[]
+}
 
-export const FavoritesTable = () => {
-  const dispatch = useDispatch()
-   const count: Book[] = useSelector((state: StoreReducer) => state.favorites)
+export const Characters = ({ data }: Props) => {
+  const dataList: Character[] = []
 
-  const columnHelper = createColumnHelper<BookTable | Book>()
+  const { data: characterData, isLoading } = useQuery({
+    queryKey: data,
+    queryFn: () => Promise.all(data.map((d) => getCharacter(d))),
+    onSuccess: () => {
+      console.log('success')
+    },
+  })
+
+  const columnHelper = createColumnHelper<Character>()
 
   const columns = [
     columnHelper.accessor('name', {
       header: 'Name',
       footer: 'Name',
+      cell: (info) => <p>{info.getValue()}</p>,
+    }),
+    columnHelper.accessor('gender', {
+      header: 'Gender',
+      footer: 'Gender',
       cell: (info) => info.getValue(),
     }),
-    columnHelper.accessor('authors', {
-      header: 'Authors',
-      footer: 'Authors',
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('characters', {
-      header: 'NumberOfCharacters',
-      footer: 'NumberOfCharacters',
-      cell: (info) => info.getValue().length,
-    }),
-    columnHelper.accessor('released', {
-      header: 'Released',
-      footer: 'Released',
-      cell: (info) => info.getValue().split('T')[0],
-    }),
-    columnHelper.accessor('view', {
-      header: 'view',
-      footer: 'view',
+    columnHelper.accessor('books', {
+      header: 'Number of Books',
+      footer: 'Number of Books',
       cell: (info) => {
-        const value = info.row.original.name
-        return (
-          <NavLink
-            to={`/book/${value}`}
-            className="text-blue-500 hover:underline"
-          >
-            View Book
-          </NavLink>
-        )
-      },
-    }),
-    columnHelper.accessor('removeFavorite', {
-      header: 'Favorite',
-      footer: 'Favorite',
-      cell: (info) => {
-        const value: Book = info.row.original
-        return (
-          <button onClick={() => dispatch(removeFavorites(value))}>
-            <FcLike />
-          </button>
-        )
+        const number:number = info.getValue().length
+        return number
       },
     }),
   ]
@@ -78,15 +56,12 @@ export const FavoritesTable = () => {
   })
 
   const pagination = useMemo(
-    () => ({
-      pageIndex,
-      pageSize,
-    }),
+    () => ({ pageIndex, pageSize }),
     [pageIndex, pageSize]
   )
 
-  const table = useReactTable({
-    data: count,
+  const table = useReactTable<Character>({
+    data: characterData ?? dataList,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -101,18 +76,20 @@ export const FavoritesTable = () => {
   useEffect(() => {
     table.setPageSize(4)
   }, [table])
-  
 
+  if (isLoading) return <div>Loading...</div>
 
-  if (!count) return <div>Loading...</div>
   return (
     <div className="grid-rows-2 sm:w-full md:w-4/5 justify-items-center justify-center m-0 pt-20 overflow-auto wx-10">
+      <h2 className="text-white font-bold text-lg text-center mb-5">
+        Characters
+      </h2>
       <table className="bg-slate-950 font-mono p-0 text-sm w-full text-gray-100 rounded-2xl overflow-hidden">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th key={header.id} className="px-4 py-6 text-center">
+                <th key={header.id} className="px-4 py-6 text-start text-white">
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -128,7 +105,7 @@ export const FavoritesTable = () => {
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="px-4 py-6 text-center">
+                <td key={cell.id} className="px-4 py-6 text-white">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
@@ -136,7 +113,6 @@ export const FavoritesTable = () => {
           ))}
         </tbody>
       </table>
-
       <div className="flex text-white justify-between space-x-2 px-3 mt-4">
         <button
           className="border rounded px-5 flex justify-center"
@@ -152,7 +128,7 @@ export const FavoritesTable = () => {
         >
           {'>'}
         </button>
-        </div>
+      </div>
     </div>
   )
 }

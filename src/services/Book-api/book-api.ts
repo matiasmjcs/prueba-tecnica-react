@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { BookAdapter } from '../adapters/Book-adapter'
+import { BookAdapter } from '../../adapters/Book-adapter'
 
 export const getBooks = async () => {
   try {

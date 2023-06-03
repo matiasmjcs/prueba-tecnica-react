@@ -2,7 +2,9 @@ import { FavoritesTable } from "../components/FavoritesTable/FavoritesTable"
 
 const Favorites = ():JSX.Element => {
     return (
-        <FavoritesTable/>
+    <div className="md:flex md:justify-center">
+      <FavoritesTable />
+    </div>
     )
 }
 

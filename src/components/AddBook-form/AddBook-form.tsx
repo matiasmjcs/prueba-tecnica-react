@@ -30,13 +30,13 @@ export const AddBookForm: React.FC = () => {
   })
 
   return (
-    <form className="max-w-md mx-auto text-slate-700 text-sm bg-slate-700 shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
-      <h2 className="text-2xl text-slate-900 font-bold mb-6">
+    <form className="max-w-md mx-auto bg-slate-950 mt-10 text-sm shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
+      <h2 className="text-2xl text-gray-200 font-bold mb-6">
         Crear nuevo libro
       </h2>
       <div className="mb-4">
         <label
-          className="block text-start text-slate-900 text-sm font-bold mb-2"
+          className="block text-start text-white text-sm font-bold mb-2"
           htmlFor="title"
         >
           Título
@@ -52,7 +52,7 @@ export const AddBookForm: React.FC = () => {
       </div>
       <div className="mb-4">
         <label
-          className="block text-start text-slate-900 text-sm font-bold mb-2"
+          className="block text-start text-white text-sm font-bold mb-2"
           htmlFor="author"
         >
           Autor
@@ -69,7 +69,7 @@ export const AddBookForm: React.FC = () => {
       </div>
       <div className="mb-4">
         <label
-          className="block text-start text-slate-900 text-sm font-bold mb-2"
+          className="block text-start text-white text-sm font-bold mb-2"
           htmlFor="genre"
         >
           Género
@@ -86,7 +86,7 @@ export const AddBookForm: React.FC = () => {
       </div>
       <div className="mb-4">
         <label
-          className="block text-start text-slate-900 text-sm font-bold mb-2"
+          className="block text-start text-white text-sm font-bold mb-2"
           htmlFor="publicationDate"
         >
           Fecha de publicación
@@ -106,7 +106,7 @@ export const AddBookForm: React.FC = () => {
       <button
         type="button"
         onClick={() => formik.handleSubmit()}
-        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors duration-300"
+        className="bg-slate-700 text-white py-2 px-4 rounded transition-colors duration-300"
       >
         Enviar
       </button>

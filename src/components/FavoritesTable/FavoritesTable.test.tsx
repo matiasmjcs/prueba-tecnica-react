@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { store } from '../../app/store'
+import { store } from '../../redux/store'
 import { FavoritesTable } from '.'
 
 const queryClient = new QueryClient()

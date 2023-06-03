@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getBooks } from '../../services/book-api'
+import { getBooks } from '../../services/Book-api'
 import {
   useReactTable,
   createColumnHelper,
@@ -15,11 +15,11 @@ import { NavLink } from 'react-router-dom'
 import {
   addFavorites,
   removeFavorites,
-} from '../../app/favorites-book-reducer/favorites-book-reducer'
+} from '../../redux/favorites-book-reducer/favorites-book-reducer'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { FcLikePlaceholder, FcLike } from 'react-icons/fc'
-import { StoreReducer } from '../../app/store'
+import { StoreReducer } from '../../redux/store'
 import { useEffect, useMemo, useState } from 'react'
 
 export const BooksTable = () => {
@@ -44,10 +44,10 @@ export const BooksTable = () => {
       footer: 'Authors',
       cell: (info) => info.getValue(),
     }),
-    columnHelper.accessor('numberOfPages', {
-      header: 'NumberOfPages',
-      footer: 'NumberOfPages',
-      cell: (info) => info.getValue(),
+    columnHelper.accessor('characters', {
+      header: 'NumberOfCharacters',
+      footer: 'NumberOfCharacters',
+      cell: (info) => info.getValue().length,
     }),
     columnHelper.accessor('released', {
       header: 'Released',
@@ -96,20 +96,18 @@ export const BooksTable = () => {
     }),
   ]
 
-  const [{ pageIndex, pageSize }, setPagination] =
-    useState<PaginationState>({
-      pageIndex: 0,
-      pageSize: 10,
-    })
+  const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  })
 
-   const pagination = useMemo(
-     () => ({
-       pageIndex,
-       pageSize,
-     }),
-     [pageIndex, pageSize]
-   )
- 
+  const pagination = useMemo(
+    () => ({
+      pageIndex,
+      pageSize,
+    }),
+    [pageIndex, pageSize]
+  )
 
   const table = useReactTable({
     data: data ?? dataList,
@@ -124,24 +122,19 @@ export const BooksTable = () => {
     onPaginationChange: setPagination,
   })
 
-  
- useEffect(() => {
-   table.setPageSize(4) 
- }, [table])
-  
+  useEffect(() => {
+    table.setPageSize(4)
+  }, [table])
 
   if (isLoading) return <div>Loading...</div>
   return (
-    <div>
-      <table className="font-mono text-sm md:table-auto border-collapse w-full bg-slate-950 bg-opacity-95 text-gray-100 rounded-2xl">
+    <div className="grid-rows-2 sm:w-full md:w-4/5 justify-items-center justify-center m-0 pt-20 overflow-auto wx-10">
+      <table className="bg-slate-950 font-mono p-0 text-sm w-full text-gray-100 rounded-2xl overflow-hidden">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  className="px-4 py-2 text-start whitespace-nowrap overflow-hidden overflow-ellipsis max-w-[200px]"
-                >
+                <th key={header.id} className="px-4 py-6 text-center">
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -157,10 +150,7 @@ export const BooksTable = () => {
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
-                <td
-                  key={cell.id}
-                  className="px-4 py-2 border border-slate-600 text-start whitespace-nowrap overflow-hidden overflow-ellipsis max-w-[200px]"
-                >
+                <td key={cell.id} className="px-4 py-6 text-center">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
@@ -169,20 +159,22 @@ export const BooksTable = () => {
         </tbody>
       </table>
 
-      <button
-        className="border rounded p-1"
-        onClick={() => table.previousPage()}
-        disabled={!table.getCanPreviousPage()}
-      >
-        {'<'}
-      </button>
-      <button
-        className="border rounded p-1"
-        onClick={() => table.nextPage()}
-        disabled={!table.getCanNextPage()}
-      >
-        {'>'}
-      </button>
+      <div className="flex text-white justify-between space-x-2 px-3 mt-4">
+        <button
+          className="border rounded px-5 flex justify-center"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          {'<'}
+        </button>
+        <button
+          className="border rounded px-5 flex justify-center"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          {'>'}
+        </button>
+      </div>
     </div>
   )
 }

@@ -7,7 +7,7 @@ import { RouterProvider } from 'react-router-dom'
 import { router } from './router/index'
 
 // import redux
-import { store } from './app/store';
+import { store } from './redux/store';
 import { Provider } from 'react-redux'
 
 // import react-query
