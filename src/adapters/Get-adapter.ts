@@ -1,7 +1,7 @@
 import { Book } from '../models'
-import { BookAdapterInterface } from '../models/IBook-adapter'
+import { GetAdapterInterface } from '../models/IGetAdapter'
 
-export class BookAdapter implements BookAdapterInterface {
+export class GetAdapter implements GetAdapterInterface {
   bookListResponse(response: Book[]): Book[] {
     return response.map((book: Book) => ({
       url: book.url,
