@@ -28,7 +28,6 @@ export const favoriteBook = createSlice({
   },
 })
 
-// Action creators are generated for each case reducer function
 export const { addFavorites, removeFavorites, formatedFavorites } =
   favoriteBook.actions
 

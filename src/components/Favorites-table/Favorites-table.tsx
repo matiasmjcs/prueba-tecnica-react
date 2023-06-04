@@ -15,10 +15,17 @@ import { useDispatch, useSelector } from 'react-redux'
 import { StoreReducer } from '../../redux/store'
 import { FcLike } from 'react-icons/fc'
 import { useEffect, useMemo, useState } from 'react'
+import { LoadingBookTable } from '../Loading-book-table'
 
 export const FavoritesTable = () => {
   const dispatch = useDispatch()
   const count: Book[] = useSelector((state: StoreReducer) => state.favorites)
+
+  const [isLoading, setIsLoading] = useState(false)
+
+  setTimeout(()=> {
+    setIsLoading(true)
+  },800)
 
   const columnHelper = createColumnHelper<BookTable | Book>()
 
@@ -34,8 +41,8 @@ export const FavoritesTable = () => {
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('characters', {
-      header: 'NumberOfCharacters',
-      footer: 'NumberOfCharacters',
+      header: 'Characters',
+      footer: 'Characters',
       cell: (info) => info.getValue().length,
     }),
     columnHelper.accessor('released', {
@@ -102,10 +109,11 @@ export const FavoritesTable = () => {
     table.setPageSize(4)
   }, [table])
 
-  if (!count) return <div>Loading...</div>
+  if (!isLoading) return <LoadingBookTable />
+  if (!count) return <LoadingBookTable/>
   return (
     <div className="grid-rows-2 sm:w-full md:w-4/5 justify-items-center justify-center m-0 pt-20 overflow-auto wx-10">
-      <table className="bg-slate-950 font-mono p-0 text-sm w-full text-gray-100 rounded-2xl overflow-hidden">
+      <table className="bg-slate-950 p-0 text-sm w-full text-gray-100 rounded-2xl overflow-hidden">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>

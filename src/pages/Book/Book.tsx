@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getBooksByName } from '../../services/Book-api'
 import { CharactersTable } from '../../components/Characters-table'
 import { BookArticle } from '../../components/Book-article'
+import { LoadingBookArticle } from '../../components/Loading-book-article'
 
 export const Book = () => {
   const params = useParams()
@@ -17,8 +18,11 @@ export const Book = () => {
     queryFn: getBooks,
   })
 
-  if (isLoading)
-    return <div className="text-white text-center">Loading ...</div>
+  if (isLoading) return (
+    <div className='flex justify-center'>
+      <LoadingBookArticle />
+    </div>
+  )
   return (
     <section className="w-full h-full flex gap-10 items-center align-center  flex-col">
       {data && <BookArticle data={data} />}
@@ -32,4 +36,4 @@ export const Book = () => {
       )}
     </section>
   )
-}
+} 

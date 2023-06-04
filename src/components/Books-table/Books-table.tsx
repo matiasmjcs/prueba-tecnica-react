@@ -22,6 +22,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { FcLikePlaceholder, FcLike } from 'react-icons/fc'
 import { StoreReducer } from '../../redux/store'
 import { useEffect, useMemo, useState } from 'react'
+import { LoadingBookTable } from '../Loading-book-table'
+
 
 export const BooksTable = () => {
   const dispatch = useDispatch()
@@ -46,8 +48,8 @@ export const BooksTable = () => {
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('characters', {
-      header: 'NumberOfCharacters',
-      footer: 'NumberOfCharacters',
+      header: 'Characters',
+      footer: 'Characters',
       cell: (info) => info.getValue().length,
     }),
     columnHelper.accessor('released', {
@@ -123,14 +125,15 @@ export const BooksTable = () => {
     onPaginationChange: setPagination,
   })
 
+  
+
   useEffect(() => {
     table.setPageSize(4)
   }, [table])
-
-  if (isLoading) return <div>Loading...</div>
+  if(isLoading) return <LoadingBookTable />
   return (
     <div className="grid-rows-2 sm:w-full md:w-4/5 justify-items-center justify-center m-0 pt-20 overflow-auto wx-10">
-      <table className="bg-slate-950 font-mono p-0 text-sm w-full text-gray-100 rounded-2xl overflow-hidden">
+      <table className="bg-slate-950 p-0 text-sm w-full text-gray-100 rounded-2xl overflow-hidden">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
@@ -159,23 +162,22 @@ export const BooksTable = () => {
           ))}
         </tbody>
       </table>
-
-      <div className="flex text-white justify-between space-x-2 px-3 mt-4">
-        <button
-          className="border rounded px-5 py-1 flex justify-center items-center"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          <IoIosArrowBack />
-        </button>
-        <button
-          className="border rounded px-5 py-1 flex justify-center items-center"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          <IoIosArrowForward />
-        </button>
-      </div>
+        <div className="flex text-white justify-between space-x-2 px-3 mt-4">
+          <button
+            className="border rounded px-5 py-1 flex justify-center items-center"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <IoIosArrowBack />
+          </button>
+          <button
+            className="border rounded px-5 py-1 flex justify-center items-center"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            <IoIosArrowForward />
+          </button>
+        </div>
     </div>
   )
 }

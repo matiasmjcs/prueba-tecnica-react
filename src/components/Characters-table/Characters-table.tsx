@@ -11,12 +11,13 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import { Character } from '../../models/ICharacter'
 import { getCharacter } from '../../services/Characters-api/Characters-api'
+import { LoadingCharacterTable } from '../Loading-character-table/Loading-character-table'
 
 interface Props {
   data: string[]
 }
 
-export const CharactersTable = ({ data }: Props) => {
+export const CharactersTable = ({ data }: Props): JSX.Element => {
   const { data: characterData, isLoading } = useQuery({
     queryKey: data,
     queryFn: () => Promise.all(data.map((d) => getCharacter(d))),
@@ -77,11 +78,11 @@ export const CharactersTable = ({ data }: Props) => {
     table.setPageSize(4)
   }, [table])
 
-  if (isLoading) return <div className="text-white">Loading...</div>
+  if (isLoading) return <LoadingCharacterTable/>
 
   return (
-    <div className="grid-rows-2 sm:w-full md:w-4/5 justify-items-center justify-center m-0 overflow-auto wx-10">
-      <table className="bg-slate-950 font-mono p-0 text-sm w-full text-gray-100 rounded-2xl overflow-hidden">
+    <div className="grid-rows-2 sm:w-full md:w-4/5 justify-items-center justify-center mb-10 overflow-auto wx-10">
+      <table className="bg-slate-950 font-bold p-0 text-md w-full text-gray-100 rounded-2xl overflow-hidden">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
