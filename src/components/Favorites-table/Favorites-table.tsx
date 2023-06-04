@@ -1,35 +1,24 @@
-import { useQuery } from '@tanstack/react-query'
-import { getBooks } from '../../services/Book-api'
 import {
   useReactTable,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
-  getPaginationRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   PaginationState,
 } from '@tanstack/react-table'
 import { Book, BookTable } from '../../models/IBook'
 import { NavLink } from 'react-router-dom'
 
-import {
-  addFavorites,
-  removeFavorites,
-} from '../../redux/favorites-book-reducer/favorites-book-reducer'
+import { removeFavorites } from '../../redux/favorites-book-reducer/favorites-book-reducer'
 import { useDispatch, useSelector } from 'react-redux'
-
-import { FcLikePlaceholder, FcLike } from 'react-icons/fc'
 import { StoreReducer } from '../../redux/store'
+import { FcLike } from 'react-icons/fc'
 import { useEffect, useMemo, useState } from 'react'
 
-export const BooksTable = () => {
+export const FavoritesTable = () => {
   const dispatch = useDispatch()
-
-  const dataList: Book[] = []
-  const { data, isLoading } = useQuery({
-    queryKey: ['Books'],
-    queryFn: getBooks,
-  })
+  const count: Book[] = useSelector((state: StoreReducer) => state.favorites)
 
   const columnHelper = createColumnHelper<BookTable | Book>()
 
@@ -69,27 +58,14 @@ export const BooksTable = () => {
         )
       },
     }),
-    columnHelper.accessor('favorite', {
+    columnHelper.accessor('removeFavorite', {
       header: 'Favorite',
       footer: 'Favorite',
-      size: 50,
       cell: (info) => {
         const value: Book = info.row.original
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const isfavorite = useSelector((state: StoreReducer) =>
-          state.favorites.includes(value)
-        )
-
-        const handleToggleFavorites = () => {
-          if (isfavorite) {
-            dispatch(removeFavorites(value))
-          } else {
-            dispatch(addFavorites(value))
-          }
-        }
         return (
-          <button onClick={handleToggleFavorites}>
-            {isfavorite ? <FcLike /> : <FcLikePlaceholder />}
+          <button onClick={() => dispatch(removeFavorites(value))}>
+            <FcLike />
           </button>
         )
       },
@@ -110,7 +86,7 @@ export const BooksTable = () => {
   )
 
   const table = useReactTable({
-    data: data ?? dataList,
+    data: count,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -126,7 +102,7 @@ export const BooksTable = () => {
     table.setPageSize(4)
   }, [table])
 
-  if (isLoading) return <div>Loading...</div>
+  if (!count) return <div>Loading...</div>
   return (
     <div className="grid-rows-2 sm:w-full md:w-4/5 justify-items-center justify-center m-0 pt-20 overflow-auto wx-10">
       <table className="bg-slate-950 font-mono p-0 text-sm w-full text-gray-100 rounded-2xl overflow-hidden">

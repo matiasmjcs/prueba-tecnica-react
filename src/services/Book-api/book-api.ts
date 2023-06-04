@@ -12,7 +12,7 @@ export const getBooks = async () => {
     console.log('Ocurrio un error con los book')
   }
 }
-  
+
 export const getBooksByName = async (name: string) => {
   try {
     const { data } = await axios.get(

@@ -3,7 +3,7 @@ import favoritesBookReducer from './favorites-book-reducer/favorites-book-reduce
 import { Book } from '../models'
 
 export interface StoreReducer {
-  favorites : Book[]
+  favorites: Book[]
 }
 
 export const store = configureStore<StoreReducer>({

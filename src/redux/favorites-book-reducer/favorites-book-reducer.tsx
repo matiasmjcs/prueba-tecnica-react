@@ -9,13 +9,13 @@ export const favoriteBook = createSlice({
   initialState,
   reducers: {
     addFavorites: (state: Book[], action: PayloadAction<Book>) => {
-       const bookToAdd = action.payload
-       const isBookInFavorites = state.some(
-         (book) => book.name === bookToAdd.name
-       )
-       if (!isBookInFavorites) {
-         state.push(bookToAdd)
-       }
+      const bookToAdd = action.payload
+      const isBookInFavorites = state.some(
+        (book) => book.name === bookToAdd.name
+      )
+      if (!isBookInFavorites) {
+        state.push(bookToAdd)
+      }
     },
     removeFavorites: (state: Book[], action: PayloadAction<Book>) => {
       const bookToRemove = action.payload

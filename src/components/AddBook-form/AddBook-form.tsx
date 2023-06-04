@@ -6,7 +6,7 @@ export const AddBookForm: React.FC = () => {
     title: '',
     author: '',
     genre: '',
-    publicationDate: ''
+    publicationDate: '',
   }
 
   const validation = () => {
@@ -14,7 +14,7 @@ export const AddBookForm: React.FC = () => {
       title: Yup.string().required('El Titulo es obligatorio'),
       author: Yup.string().required('El author es obligatorio'),
       genre: Yup.string().required('El Genero es obligatorio'),
-      publicationDate: Yup.date()
+      publicationDate: Yup.date(),
     }
   }
 
@@ -26,7 +26,7 @@ export const AddBookForm: React.FC = () => {
       console.log(data.author)
       console.log(data.genre)
       console.log(data.publicationDate)
-    }
+    },
   })
 
   return (
@@ -91,7 +91,9 @@ export const AddBookForm: React.FC = () => {
         >
           Fecha de publicación
         </label>
-        <p className="text-white text-start ">{formik.errors.publicationDate}</p>
+        <p className="text-white text-start ">
+          {formik.errors.publicationDate}
+        </p>
 
         <input
           type="date"

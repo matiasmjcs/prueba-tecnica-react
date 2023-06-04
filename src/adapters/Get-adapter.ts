@@ -1,4 +1,5 @@
 import { Book } from '../models'
+import { Character } from '../models/ICharacter'
 import { GetAdapterInterface } from '../models/IGetAdapter'
 
 export class GetAdapter implements GetAdapterInterface {
@@ -19,32 +20,35 @@ export class GetAdapter implements GetAdapterInterface {
   }
 
   bookResponse([book]: Book[]): Book {
-     const {
-       url,
-       isbn,
-       name,
-       numberOfPages,
-       authors,
-       country,
-       publisher,
-       released,
-       mediaType,
-       povCharacters,
-       characters,
-     } = book
+    const {
+      url,
+      isbn,
+      name,
+      numberOfPages,
+      authors,
+      country,
+      publisher,
+      released,
+      mediaType,
+      povCharacters,
+      characters,
+    } = book
 
-     return {
-       url,
-       isbn,
-       name,
-       numberOfPages,
-       authors,
-       country,
-       publisher,
-       released,
-       mediaType,
-       povCharacters,
-       characters,
-     }
+    return {
+      url,
+      isbn,
+      name,
+      numberOfPages,
+      authors,
+      country,
+      publisher,
+      released,
+      mediaType,
+      povCharacters,
+      characters,
+    }
+  }
+  characterResponse(character: Character): Character {
+    return character
   }
 }
