@@ -1,10 +1,12 @@
+import { useQuery } from '@tanstack/react-query'
+import { getBooks } from '../../services/Book-api'
 import {
   useReactTable,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
+  getFilteredRowModel,
   PaginationState,
   FilterFn,
   ColumnFiltersState,
@@ -16,15 +18,19 @@ import {
 import { Book, BookTable } from '../../models/IBook'
 import { NavLink } from 'react-router-dom'
 
-import { removeFavorites } from '../../redux/favorites-book-reducer/favorites-book-reducer'
+import {
+  addFavorites,
+  removeFavorites,
+} from '../../redux/favorites-book-reducer/favorites-book-reducer'
 import { useDispatch, useSelector } from 'react-redux'
+
+import { FcLikePlaceholder, FcLike } from 'react-icons/fc'
 import { StoreReducer } from '../../redux/store'
-import { FcLike } from 'react-icons/fc'
 import { useEffect, useMemo, useState } from 'react'
 import { LoadingBookTable } from '../Loading-book-table'
+
 import { RankingInfo, rankItem } from '@tanstack/match-sorter-utils'
 import { Filter } from '../../utils/Filter'
-
 
 declare module '@tanstack/table-core' {
   interface FilterFns {
@@ -48,66 +54,83 @@ const fuzzyFilter: FilterFn<Book> = (row, columnId, value, addMeta) => {
   return itemRank.passed
 }
 
-export const FavoritesTable = () => {
+export const BooksTable = (): JSX.Element => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = useState('')
+
   const dispatch = useDispatch()
-  const count: Book[] = useSelector((state: StoreReducer) => state.favorites)
 
-  const [isLoading, setIsLoading] = useState(false)
-
-  setTimeout(()=> {
-    setIsLoading(true)
-  },800)
+  const dataList: Book[] = []
+  const { data, isLoading } = useQuery({
+    queryKey: ['Books'],
+    queryFn: getBooks,
+  })
 
   const columnHelper = createColumnHelper<BookTable | Book>()
 
-  const columns = [
-    columnHelper.accessor('name', {
-      header: 'Name',
-      footer: 'Name',
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('authors', {
-      header: 'Authors',
-      footer: 'Authors',
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor('released', {
-      header: 'Released',
-      footer: 'Released',
-      cell: (info) => info.getValue().split('T')[0],
-    }),
-    columnHelper.accessor('view', {
-      header: 'view',
-      footer: 'view',
-      enableColumnFilter: false,
-      cell: (info) => {
-        const value = info.row.original.name
-        return (
-          <NavLink
-            to={`/book/${value}`}
-            className="text-blue-500 hover:underline"
-          >
-            View Book
-          </NavLink>
-        )
-      },
-    }),
-    columnHelper.accessor('removeFavorite', {
-      header: 'Favorite',
-      footer: 'Favorite',
-      enableColumnFilter: false,
-      cell: (info) => {
-        const value: Book = info.row.original
-        return (
-          <button onClick={() => dispatch(removeFavorites(value))}>
-            <FcLike />
-          </button>
-        )
-      },
-    }),
-  ]
+  
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor('name', {
+        header: 'Name',
+        footer: 'Name',
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor('authors', {
+        header: 'Authors',
+        footer: 'Authors',
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor('released', {
+        header: 'Released',
+        footer: 'Released',
+        cell: (info) => info.getValue().split('T')[0],
+      }),
+      columnHelper.accessor('view', {
+        header: 'view',
+        footer: 'view',
+        enableColumnFilter: false,
+        cell: (info) => {
+          const value = info.row.original.name
+          return (
+            <NavLink
+              to={`/book/${value}`}
+              className="text-blue-500 hover:underline"
+            >
+              View Book
+            </NavLink>
+          )
+        },
+      }),
+      columnHelper.accessor('favorite', {
+        header: 'Favorite',
+        footer: 'Favorite',
+        enableColumnFilter: false,
+        size: 50,
+        cell: (info) => {
+          const value: Book = info.row.original
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          const isfavorite = useSelector((state: StoreReducer) =>
+            state.favorites.includes(value)
+          )
+
+          const handleToggleFavorites = () => {
+            if (isfavorite) {
+              dispatch(removeFavorites(value))
+            } else {
+              dispatch(addFavorites(value))
+            }
+          }
+          return (
+            <button onClick={handleToggleFavorites}>
+              {isfavorite ? <FcLike /> : <FcLikePlaceholder />}
+            </button>
+          )
+        },
+      }),
+    ],
+    [columnHelper, dispatch]
+  )
 
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -123,13 +146,8 @@ export const FavoritesTable = () => {
   )
 
   const table = useReactTable({
-    data: count,
+    data: data ?? dataList,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    debugTable: true,
-    onPaginationChange: setPagination,
     filterFns: {
       fuzzy: fuzzyFilter,
     },
@@ -141,21 +159,26 @@ export const FavoritesTable = () => {
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: fuzzyFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
+    debugTable: true,
     debugHeaders: true,
+    onPaginationChange: setPagination,
   })
 
   useEffect(() => {
     table.setPageSize(4)
   }, [table])
 
-  if (!isLoading) return <LoadingBookTable />
-  if (!count) return <LoadingBookTable/>
+  if (isLoading) return <LoadingBookTable />
   return (
-    <div className="grid-rows-2 sm:w-full md:w-4/5 justify-items-center justify-center m-0 pt-20 overflow-auto wx-10">
+    <div className="p-2 grid-rows-2 sm:w-full md:w-4/5 justify-items-center justify-center m-0 pt-20 overflow-auto wx-10">
+      <div className="h-2" />
       <table className="bg-slate-950 p-0 text-sm w-full text-gray-100 rounded-2xl overflow-hidden">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -200,34 +223,24 @@ export const FavoritesTable = () => {
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="px-4 py-6 text-center">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
+          {table.getRowModel().rows.map((row) => {
+            return (
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell) => {
+                  return (
+                    <td key={cell.id} className={`px-4 py-4 text-center`}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  )
+                })}
+              </tr>
+            )
+          })}
         </tbody>
       </table>
-
-      <div className="flex text-white justify-between space-x-2 px-3 mt-4">
-        <button
-          className="border rounded px-5 flex justify-center"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {'<'}
-        </button>
-        <button
-          className="border rounded px-5 flex justify-center"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          {'>'}
-        </button>
-      </div>
     </div>
   )
 }

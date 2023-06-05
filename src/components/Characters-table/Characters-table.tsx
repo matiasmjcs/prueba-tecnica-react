@@ -7,17 +7,50 @@ import {
   useReactTable,
   PaginationState,
   flexRender,
+  getSortedRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFacetedMinMaxValues,
+  FilterFn,
+  ColumnFiltersState,
 } from '@tanstack/react-table'
 import { useEffect, useMemo, useState } from 'react'
 import { Character } from '../../models/ICharacter'
 import { getCharacter } from '../../services/Characters-api/Characters-api'
 import { LoadingCharacterTable } from '../Loading-character-table/Loading-character-table'
+import { Book } from '../../models'
+import { RankingInfo, rankItem } from '@tanstack/match-sorter-utils'
+import { Filter } from '../../utils/Filter'
 
 interface Props {
   data: string[]
 }
 
+declare module '@tanstack/table-core' {
+  interface FilterFns {
+    fuzzy: FilterFn<Book>
+  }
+  interface FilterMeta {
+    itemRank: RankingInfo
+  }
+}
+
+const fuzzyFilter: FilterFn<Book> = (row, columnId, value, addMeta) => {
+  // Rank the item
+  const itemRank = rankItem(row.getValue(columnId), value)
+
+  // Store the itemRank info
+  addMeta({
+    itemRank,
+  })
+
+  // Return if the item should be filtered in/out
+  return itemRank.passed
+}
+
 export const CharactersTable = ({ data }: Props): JSX.Element => {
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+    const [globalFilter, setGlobalFilter] = useState('')
   const { data: characterData, isLoading } = useQuery({
     queryKey: data,
     queryFn: () => Promise.all(data.map((d) => getCharacter(d))),
@@ -40,8 +73,9 @@ export const CharactersTable = ({ data }: Props): JSX.Element => {
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('books', {
-      header: 'Number of Books',
-      footer: 'Number of Books',
+      header: 'Books',
+      footer: 'Books',
+      enableColumnFilter: false,
       cell: (info) => {
         const number: number = info.getValue().length
         return number
@@ -63,15 +97,27 @@ export const CharactersTable = ({ data }: Props): JSX.Element => {
 
   const table = useReactTable<Character>({
     data: filteredCharacterData,
+    getPaginationRowModel: getPaginationRowModel(),
+    debugTable: true,
+    onPaginationChange: setPagination,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    debugTable: true,
+    filterFns: {
+      fuzzy: fuzzyFilter,
+    },
     state: {
+      columnFilters,
+      globalFilter,
       pagination,
     },
-    onPaginationChange: setPagination,
+    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
+    getSortedRowModel: getSortedRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    getFacetedMinMaxValues: getFacetedMinMaxValues(),
+    debugHeaders: true,
   })
 
   useEffect(() => {
@@ -86,16 +132,42 @@ export const CharactersTable = ({ data }: Props): JSX.Element => {
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th key={header.id} className="px-4 py-6 text-start text-white">
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </th>
-              ))}
+              {headerGroup.headers.map((header) => {
+                return (
+                  <th
+                    key={header.id}
+                    colSpan={header.colSpan}
+                    className="px-4 py-6 text-center"
+                  >
+                    {header.isPlaceholder ? null : (
+                      <>
+                        <div
+                          {...{
+                            className: header.column.getCanSort()
+                              ? 'cursor-pointer select-none'
+                              : '',
+                            onClick: header.column.getToggleSortingHandler(),
+                          }}
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                          {{
+                            asc: ' 🔼',
+                            desc: ' 🔽',
+                          }[header.column.getIsSorted() as string] ?? null}
+                        </div>
+                        {header.column.getCanFilter() ? (
+                          <div>
+                            <Filter column={header.column} table={table} />
+                          </div>
+                        ) : null}
+                      </>
+                    )}
+                  </th>
+                )
+              })}
             </tr>
           ))}
         </thead>
