@@ -60,20 +60,20 @@ Si deseas contribuir a este proyecto, siéntete libre de hacer un fork y enviar 
 
 ## Preguntas
 
-# ¿Cómo decidiste las opciones técnicas y arquitectónicas utilizadas como parte de su solución?
-En este proyecto he utilizado React con TypeScript, He organizado el código en carpetas como components, adapters, interceptor, models, services, hooks, pages, redux, router y utils para mantenerlo ordenado y modular. He consumido datos de una API utilizando funciones de la carpeta services y adaptadores e interceptors para transformarlos según nuestras necesidades. la carpeta models contiene los tipos e interfaces que ayudan a asegurar los tipos de  datos utilizados en la Aplicacion. Además, he utilizado React Query para manejar las solicitudes de datos de manera eficiente.
+### ¿Cómo decidiste las opciones técnicas y arquitectónicas utilizadas como parte de su solución?
+En este proyecto he utilizado React con TypeScript, He organizado el código en carpetas como components, adapters, interceptor, models, services, hooks, pages, redux, router y utils para mantenerlo ordenado y modular. He consumido datos de una API utilizando funciones de la carpeta services y adaptadores e interceptors para transformarlos según las necesidades de la aplicacion. la carpeta models contiene los tipos e interfaces que ayudan a asegurar los tipos de  datos utilizados en la Aplicacion. Además, he utilizado React Query para manejar las solicitudes de datos de manera eficiente.
 
-# ¿Hay alguna mejora que dejaste pendiente de hacer en su envío?
+### ¿Hay alguna mejora que dejaste pendiente de hacer en su envío?
 siento que pude terminar las tareas requeridas, sin embargo la complejidad de los test se podria mejorar con mas tiempo.
 
-# ¿Qué harías de manera diferente si se le asignara más tiempo?
+### ¿Qué harías de manera diferente si se le asignara más tiempo?
 la arquitectura, si tuviera mas tiempo el proyecto y necesita ser mantenido al largo plazo, evaluaria la posibilidad de aplicar alguna arquitectura hexagonal o clean architecture para poder hacer la aplicacion mas escalable y mantenible, tambien mejoraria la calidad de los test.
 
 ## librerias adicionales utilizadas 
 
 `React Query:` La he utilizado para manejar las solicitudes de datos de manera eficiente, gestionar el estado de la caché y realizar actualizaciones automáticas de los datos.
 
-`ramer Motion:` Esta librería me ha permitido agregar animaciones y transiciones suaves a los componentes, brindando una experiencia visual más atractiva.
+`Framer Motion:` Esta librería me ha permitido agregar animaciones y transiciones suaves a los componentes, brindando una experiencia visual más atractiva.
 
 `React Loading Skeleton:` La he utilizado para mostrar esqueletos de carga mientras se obtienen los datos de la API, proporcionando retroalimentación visual al usuario durante la carga.
 
