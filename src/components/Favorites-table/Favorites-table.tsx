@@ -24,7 +24,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { LoadingBookTable } from '../Loading-book-table'
 import { RankingInfo, rankItem } from '@tanstack/match-sorter-utils'
 import { Filter } from '../../utils/Filter'
-
+import { motion } from 'framer-motion'
+import { StateModal } from '../../models'
+import { ModalFavorites } from '../Modal-Favorites'
 
 declare module '@tanstack/table-core' {
   interface FilterFns {
@@ -53,12 +55,12 @@ export const FavoritesTable = () => {
   const [globalFilter, setGlobalFilter] = useState('')
   const dispatch = useDispatch()
   const count: Book[] = useSelector((state: StoreReducer) => state.favorites)
-
+  const [success, setSucess] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
-  setTimeout(()=> {
+  setTimeout(() => {
     setIsLoading(true)
-  },800)
+  }, 800)
 
   const columnHelper = createColumnHelper<BookTable | Book>()
 
@@ -76,12 +78,14 @@ export const FavoritesTable = () => {
     columnHelper.accessor('released', {
       header: 'Released',
       footer: 'Released',
+      enableColumnFilter: false,
       cell: (info) => info.getValue().split('T')[0],
     }),
     columnHelper.accessor('view', {
       header: 'view',
       footer: 'view',
       enableColumnFilter: false,
+      enableSorting: false,
       cell: (info) => {
         const value = info.row.original.name
         return (
@@ -98,10 +102,19 @@ export const FavoritesTable = () => {
       header: 'Favorite',
       footer: 'Favorite',
       enableColumnFilter: false,
+      enableSorting: false,
       cell: (info) => {
         const value: Book = info.row.original
         return (
-          <button onClick={() => dispatch(removeFavorites(value))}>
+          <button
+            onClick={() => {
+              dispatch(removeFavorites(value))
+              setSucess(true)
+              setTimeout(() => {
+                setSucess(false)
+              }, 1000)
+            }}
+          >
             <FcLike />
           </button>
         )
@@ -153,81 +166,99 @@ export const FavoritesTable = () => {
   }, [table])
 
   if (!isLoading) return <LoadingBookTable />
-  if (!count) return <LoadingBookTable/>
+  if (!count) return <LoadingBookTable />
   return (
-    <div className="grid-rows-2 sm:w-full md:w-4/5 justify-items-center justify-center m-0 pt-20 overflow-auto wx-10">
-      <table className="bg-slate-950 p-0 text-sm w-full text-gray-100 rounded-2xl overflow-hidden">
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <th
-                    key={header.id}
-                    colSpan={header.colSpan}
-                    className="px-4 py-6 text-center"
-                  >
-                    {header.isPlaceholder ? null : (
-                      <>
-                        <div
-                          {...{
-                            className: header.column.getCanSort()
-                              ? 'cursor-pointer select-none'
-                              : '',
-                            onClick: header.column.getToggleSortingHandler(),
-                          }}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {{
-                            asc: ' 🔼',
-                            desc: ' 🔽',
-                          }[header.column.getIsSorted() as string] ?? null}
-                        </div>
-                        {header.column.getCanFilter() ? (
-                          <div>
-                            <Filter column={header.column} table={table} />
+    <>
+      {success && (
+        <ModalFavorites
+          _type={StateModal.Error}
+          text="Removed from favorites"
+        />
+      )}
+      <motion.div
+        style={{ minHeight: 500 }}
+        initial={{ scale: 1, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1, transition: { duration: 0.8 } }}
+        className="grid-rows-2 sm:w-full justify-items-center justify-center sm:mx-10 md:mx-20 mt-20 wx-10"
+      >
+        <motion.table
+          style={{ minHeight: 350 }}
+          initial={{ scale: 1, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1, transition: { duration: 0.8 } }}
+          className="bg-slate-950 p-0 text-sm w-full text-gray-100 rounded-2xl"
+        >
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <th
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      className="px-4 pt-6 text-center"
+                    >
+                      {header.isPlaceholder ? null : (
+                        <>
+                          <div
+                            {...{
+                              className: header.column.getCanSort()
+                                ? 'cursor-pointer select-none'
+                                : '',
+                              onClick: header.column.getToggleSortingHandler(),
+                            }}
+                          >
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                            {{
+                              asc: ' 🔼',
+                              desc: ' 🔽',
+                            }[header.column.getIsSorted() as string] ?? null}
                           </div>
-                        ) : null}
-                      </>
-                    )}
-                  </th>
-                )
-              })}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="px-4 py-6 text-center">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                          {header.column.getCanFilter() ? (
+                            <div>
+                              <Filter column={header.column} table={table} />
+                            </div>
+                          ) : null}
+                        </>
+                      )}
+                    </th>
+                  )
+                })}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => (
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} className="px-4 py-6 text-center">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </motion.table>
 
-      <div className="flex text-white justify-between space-x-2 px-3 mt-4">
-        <button
-          className="border rounded px-5 flex justify-center"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {'<'}
-        </button>
-        <button
-          className="border rounded px-5 flex justify-center"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          {'>'}
-        </button>
-      </div>
-    </div>
+        <div className="flex w-full text-white justify-between space-x-2 px-3 mt-4">
+          <button
+            className="border rounded px-5 flex justify-center"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {'<'}
+          </button>
+          <button
+            className="border rounded px-5 flex justify-center"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            {'>'}
+          </button>
+        </div>
+      </motion.div>
+    </>
   )
 }

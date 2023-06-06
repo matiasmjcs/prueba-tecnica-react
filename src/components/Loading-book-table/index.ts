@@ -1,1 +1,1 @@
-export * from './Loading-book-table';
+export * from './Loading-book-table'

@@ -1,8 +1,8 @@
-import { Book } from '.'
+import { BookDataResponse } from '.'
 import { Character } from './ICharacter'
 
 export interface GetAdapterInterface {
-  bookListResponse(book: Book[]): Book[]
-  bookResponse(book: Book[]): Book
+  bookListResponse(book: BookDataResponse[]): BookDataResponse[]
+  bookResponse(book: BookDataResponse[]): BookDataResponse
   characterResponse(character: Character): Character
 }

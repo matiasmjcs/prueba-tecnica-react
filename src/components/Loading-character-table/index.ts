@@ -1,1 +1,1 @@
-export * from './Loading-character-table';
+export * from './Loading-character-table'

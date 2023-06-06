@@ -32,6 +32,10 @@ import { LoadingBookTable } from '../Loading-book-table'
 import { RankingInfo, rankItem } from '@tanstack/match-sorter-utils'
 import { Filter } from '../../utils/Filter'
 
+import { ModalFavorites } from '../Modal-Favorites'
+import { motion } from 'framer-motion'
+import { StateModal } from '../../models'
+
 declare module '@tanstack/table-core' {
   interface FilterFns {
     fuzzy: FilterFn<Book>
@@ -58,6 +62,11 @@ export const BooksTable = (): JSX.Element => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = useState('')
 
+  const [success, setSucess] = useState(false)
+  const [remove, setRemove] = useState(false)
+
+  const [modalText, setModalText] = useState('')
+
   const dispatch = useDispatch()
 
   const dataList: Book[] = []
@@ -68,7 +77,6 @@ export const BooksTable = (): JSX.Element => {
 
   const columnHelper = createColumnHelper<BookTable | Book>()
 
-  
   const columns = useMemo(
     () => [
       columnHelper.accessor('name', {
@@ -84,12 +92,14 @@ export const BooksTable = (): JSX.Element => {
       columnHelper.accessor('released', {
         header: 'Released',
         footer: 'Released',
+        enableColumnFilter: false,
         cell: (info) => info.getValue().split('T')[0],
       }),
       columnHelper.accessor('view', {
         header: 'view',
         footer: 'view',
         enableColumnFilter: false,
+        enableSorting: false,
         cell: (info) => {
           const value = info.row.original.name
           return (
@@ -106,6 +116,7 @@ export const BooksTable = (): JSX.Element => {
         header: 'Favorite',
         footer: 'Favorite',
         enableColumnFilter: false,
+        enableSorting: false,
         size: 50,
         cell: (info) => {
           const value: Book = info.row.original
@@ -117,8 +128,18 @@ export const BooksTable = (): JSX.Element => {
           const handleToggleFavorites = () => {
             if (isfavorite) {
               dispatch(removeFavorites(value))
+              setModalText('Removed from favorites')
+              setRemove(true)
+              setTimeout(() => {
+                setRemove(false)
+              }, 800)
             } else {
               dispatch(addFavorites(value))
+              setModalText('Added to favorites')
+              setSucess(true)
+              setTimeout(() => {
+                setSucess(false)
+              }, 800)
             }
           }
           return (
@@ -177,70 +198,99 @@ export const BooksTable = (): JSX.Element => {
 
   if (isLoading) return <LoadingBookTable />
   return (
-    <div className="p-2 grid-rows-2 sm:w-full md:w-4/5 justify-items-center justify-center m-0 pt-20 overflow-auto wx-10">
-      <div className="h-2" />
-      <table className="bg-slate-950 p-0 text-sm w-full text-gray-100 rounded-2xl overflow-hidden">
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <th
-                    key={header.id}
-                    colSpan={header.colSpan}
-                    className="px-4 py-6 text-center"
-                  >
-                    {header.isPlaceholder ? null : (
-                      <>
-                        <div
-                          {...{
-                            className: header.column.getCanSort()
-                              ? 'cursor-pointer select-none'
-                              : '',
-                            onClick: header.column.getToggleSortingHandler(),
-                          }}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {{
-                            asc: ' 🔼',
-                            desc: ' 🔽',
-                          }[header.column.getIsSorted() as string] ?? null}
-                        </div>
-                        {header.column.getCanFilter() ? (
-                          <div>
-                            <Filter column={header.column} table={table} />
-                          </div>
-                        ) : null}
-                      </>
-                    )}
-                  </th>
-                )
-              })}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => {
-            return (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => {
+    <>
+      {success && (
+        <ModalFavorites _type={StateModal.Success} text={`${modalText}`} />
+      )}
+      {remove && (
+        <ModalFavorites _type={StateModal.Error} text={`${modalText}`} />
+      )}
+      <motion.div
+        initial={{ scale: 1, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1, transition: { duration: 0.8 } }}
+        style={{ minHeight: 350 }}
+        className="grid-rows-2 sm:w-full justify-items-center justify-center sm:mx-10 md:mx-20 mt-20 wx-10"
+      >
+        <div className="h-2" />
+        <table className="bg-slate-950 p-0 text-sm w-full text-gray-100 rounded-2xl">
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
                   return (
-                    <td key={cell.id} className={`px-4 py-4 text-center`}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
+                    <th
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      className="px-4 pt-6 text-center"
+                    >
+                      {header.isPlaceholder ? null : (
+                        <>
+                          <div
+                            {...{
+                              className: header.column.getCanSort()
+                                ? 'cursor-pointer select-none'
+                                : '',
+                              onClick: header.column.getToggleSortingHandler(),
+                            }}
+                          >
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                            {{
+                              asc: ' 🔼',
+                              desc: ' 🔽',
+                            }[header.column.getIsSorted() as string] ?? null}
+                          </div>
+                          {header.column.getCanFilter() ? (
+                            <div>
+                              <Filter column={header.column} table={table} />
+                            </div>
+                          ) : null}
+                        </>
                       )}
-                    </td>
+                    </th>
                   )
                 })}
               </tr>
-            )
-          })}
-        </tbody>
-      </table>
-    </div>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => {
+              return (
+                <tr key={row.id}>
+                  {row.getVisibleCells().map((cell) => {
+                    return (
+                      <td key={cell.id} className={`px-5 py-5 text-center`}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    )
+                  })}
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+        <div className="flex text-white justify-between space-x-2 px-3 mt-4">
+          <button
+            className="border rounded px-5 flex justify-center"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {'<'}
+          </button>
+          <button
+            className="border rounded px-5 flex justify-center"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            {'>'}
+          </button>
+        </div>
+      </motion.div>
+    </>
   )
 }

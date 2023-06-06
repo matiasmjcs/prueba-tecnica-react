@@ -1,5 +1,7 @@
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
+import { motion } from 'framer-motion'
+
 export const LoadingBookTable = () => {
   return (
     <SkeletonTheme
@@ -9,7 +11,11 @@ export const LoadingBookTable = () => {
       height={20}
       width={90}
     >
-      <section className=" flex sm:w-full md:w-4/5 justify-items-center justify-center m-0 pt-20 overflow-auto wx-10">
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1, transition: { duration: 0.6 } }}
+        className=" flex sm:w-full md:w-4/5 justify-items-center justify-center m-0 pt-20 overflow-auto wx-10"
+      >
         <article className=" bg-slate-950 p-5 text-sm w-full text-gray-100  rounded-2xl overflow-hidden">
           <div className="flex justify-around gap-5 mb-5 w-full">
             <div className=" grid items-center">
@@ -34,7 +40,7 @@ export const LoadingBookTable = () => {
             </div>
           </div>
         </article>
-      </section>
+      </motion.section>
     </SkeletonTheme>
   )
 }

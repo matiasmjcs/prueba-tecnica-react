@@ -1,1 +1,6 @@
 export * from './IBook'
+export * from './ICharacter'
+export * from './IGetAdapter'
+export * from './IGetInterceptors'
+export * from './IModal'
+export * from './index'

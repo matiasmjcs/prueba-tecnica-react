@@ -21,8 +21,9 @@ import { LoadingCharacterTable } from '../Loading-character-table/Loading-charac
 import { Book } from '../../models'
 import { RankingInfo, rankItem } from '@tanstack/match-sorter-utils'
 import { Filter } from '../../utils/Filter'
+import { motion } from 'framer-motion'
 
-interface Props {
+export interface Props {
   data: string[]
 }
 
@@ -49,8 +50,8 @@ const fuzzyFilter: FilterFn<Book> = (row, columnId, value, addMeta) => {
 }
 
 export const CharactersTable = ({ data }: Props): JSX.Element => {
-    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [globalFilter, setGlobalFilter] = useState('')
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [globalFilter, setGlobalFilter] = useState('')
   const { data: characterData, isLoading } = useQuery({
     queryKey: data,
     queryFn: () => Promise.all(data.map((d) => getCharacter(d))),
@@ -58,7 +59,6 @@ export const CharactersTable = ({ data }: Props): JSX.Element => {
       console.log('success')
     },
   })
-
   const columnHelper = createColumnHelper<Character>()
 
   const columns = [
@@ -77,7 +77,7 @@ export const CharactersTable = ({ data }: Props): JSX.Element => {
       footer: 'Books',
       enableColumnFilter: false,
       cell: (info) => {
-        const number: number = info.getValue().length
+        const number: number = info.getValue().length ?? 0
         return number
       },
     }),
@@ -93,7 +93,11 @@ export const CharactersTable = ({ data }: Props): JSX.Element => {
     [pageIndex, pageSize]
   )
 
-  const filteredCharacterData: Character[] = characterData as Character[]
+  const filteredCharacterData: Character[] = (characterData as Character[]) || [
+    'caharacter1',
+    'caharacter2',
+    'caharacter3',
+  ]
 
   const table = useReactTable<Character>({
     data: filteredCharacterData,
@@ -124,11 +128,15 @@ export const CharactersTable = ({ data }: Props): JSX.Element => {
     table.setPageSize(4)
   }, [table])
 
-  if (isLoading) return <LoadingCharacterTable/>
+  if (isLoading) return <LoadingCharacterTable />
 
   return (
-    <div className="grid-rows-2 sm:w-full md:w-4/5 justify-items-center justify-center mb-10 overflow-auto wx-10">
-      <table className="bg-slate-950 font-bold p-0 text-md w-full text-gray-100 rounded-2xl overflow-hidden">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1, transition: { duration: 0.6 } }}
+      className="grid-rows-2 sm:w-full md:w-4/5 justify-items-center justify-center mb-10 overflow-x-auto"
+    >
+      <table className="sm:wx-10 bg-slate-950 p-0 text-md w-full text-gray-100 rounded-2xl">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
@@ -137,7 +145,7 @@ export const CharactersTable = ({ data }: Props): JSX.Element => {
                   <th
                     key={header.id}
                     colSpan={header.colSpan}
-                    className="px-4 py-6 text-center"
+                    className="px-4 pt-6 text-start"
                   >
                     {header.isPlaceholder ? null : (
                       <>
@@ -199,6 +207,6 @@ export const CharactersTable = ({ data }: Props): JSX.Element => {
           {'>'}
         </button>
       </div>
-    </div>
+    </motion.div>
   )
 }

@@ -1,10 +1,10 @@
-import { Book } from '../models'
+import { BookDataResponse } from '../models'
 import { Character } from '../models/ICharacter'
 import { GetAdapterInterface } from '../models/IGetAdapter'
 
 export class GetAdapter implements GetAdapterInterface {
-  bookListResponse(response: Book[]): Book[] {
-    return response.map((book: Book) => ({
+  bookListResponse(response: BookDataResponse[]): BookDataResponse[] {
+    return response.map((book: BookDataResponse) => ({
       url: book.url,
       isbn: book.isbn,
       name: book.name,
@@ -19,7 +19,7 @@ export class GetAdapter implements GetAdapterInterface {
     }))
   }
 
-  bookResponse([book]: Book[]): Book {
+  bookResponse([book]: BookDataResponse[]): BookDataResponse {
     const {
       url,
       isbn,

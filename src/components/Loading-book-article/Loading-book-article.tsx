@@ -1,8 +1,14 @@
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
+import { motion } from 'framer-motion'
+
 export const LoadingBookArticle = () => {
   return (
-    <article className="p-0 m-0 text-white bg-slate-950 mt-10 flex  pl-5 pr-5 py-5 w-4/5 h-full min-h-150 rounded-lg h-4/5 h-auto flex-col flex-wrap">
+    <motion.article
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1, transition: { duration: 0.6 } }}
+      className="p-0 m-0 text-white bg-slate-950 mt-10 flex  pl-5 pr-5 py-5 w-4/5 min-h-150 rounded-lg h-auto flex-col flex-wrap"
+    >
       <SkeletonTheme
         baseColor="rgb(180 180 180)"
         highlightColor="rgb(255 255 255)"
@@ -11,7 +17,7 @@ export const LoadingBookArticle = () => {
         width={90}
       >
         <h1 className="flex justify-center mb-5 font-bold">
-          <Skeleton width={230} height={15}/>
+          <Skeleton width={230} height={15} />
         </h1>
         <hr />
         <br />
@@ -53,6 +59,6 @@ export const LoadingBookArticle = () => {
           </p>
         </div>
       </SkeletonTheme>
-    </article>
+    </motion.article>
   )
 }

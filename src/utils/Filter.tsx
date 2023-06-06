@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Table, Column } from '@tanstack/react-table'
-import {useMemo } from 'react'
+import { useMemo } from 'react'
 import { DebouncedInput } from './DebouncedInput'
+
 export function Filter({
   column,
   table,
@@ -20,7 +21,8 @@ export function Filter({
       typeof firstValue === 'number'
         ? []
         : Array.from(column.getFacetedUniqueValues().keys()).sort(),
-    [column, firstValue]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [column.getFacetedUniqueValues()]
   )
 
   return typeof firstValue === 'number' ? (
@@ -63,20 +65,15 @@ export function Filter({
     <>
       <datalist id={column.id + 'list'}>
         {sortedUniqueValues.slice(0, 5000).map((value: any) => {
-          if (typeof value === 'string')
-            return <option value={value} key={value} />
-          if (typeof value === 'object')
-            return <option value={value.length} key={value} />
+          return <option value={value} key={value} />
         })}
       </datalist>
-    <DebouncedInput
+      <DebouncedInput
         type="text"
         value={(columnFilterValue ?? '') as string}
-        onChange={(value) => {
-          column.setFilterValue(value)
-        }}
+        onChange={(value) => column.setFilterValue(value)}
         placeholder={`Search... (${column.getFacetedUniqueValues().size})`}
-        className="w-36 border shadow rounded"
+        className="w-36 border shadow rounded "
         list={column.id + 'list'}
       />
       <div className="h-1" />

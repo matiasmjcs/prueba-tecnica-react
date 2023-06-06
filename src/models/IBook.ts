@@ -1,6 +1,6 @@
 import { MouseEventHandler } from 'react'
 
-export interface Book {
+export interface BookDataResponse {
   url: string
   name: string
   isbn: string
@@ -12,6 +12,12 @@ export interface Book {
   released: string
   characters: string[]
   povCharacters: string[]
+}
+
+type BookDataResponseFormated = Omit<BookDataResponse, 'authors'>
+
+export interface Book extends BookDataResponseFormated {
+  authors: string
 }
 
 export interface BookTable extends Book {

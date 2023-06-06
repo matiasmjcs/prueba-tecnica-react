@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react"
-
+import { useState, useEffect } from 'react'
 // A debounced input react component
 export function DebouncedInput({
   value: initialValue,
@@ -23,15 +22,16 @@ export function DebouncedInput({
     }, debounce)
 
     return () => clearTimeout(timeout)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
 
   return (
     <input
       {...props}
       value={value}
-      className="text-slate-700"
+      className="text-slate-700 rounded bg-slate-600 text-white h-6 mt-2 pl-2"
       onChange={(e) => setValue(e.target.value)}
+      placeholder="search book"
     />
   )
 }
