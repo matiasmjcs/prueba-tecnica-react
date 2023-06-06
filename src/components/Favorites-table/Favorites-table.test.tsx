@@ -1,21 +1,14 @@
 import { render } from '@testing-library/react'
 import { Provider } from 'react-redux'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { store } from '../../redux/store'
-import { FavoritesTable } from '.'
+import { FavoritesTable } from './Favorites-table'
 
-const queryClient = new QueryClient()
-
-it('renders the Favorites Table component', () => {
-  try {
+describe('FavoritesTable component', () => {
+  it('renders the table with correct headers', () => {
     render(
       <Provider store={store}>
-        <QueryClientProvider client={queryClient}>
-          <FavoritesTable />
-        </QueryClientProvider>
+        <FavoritesTable />
       </Provider>
     )
-  } catch (error) {
-    console.error(error)
-  }
+  })
 })

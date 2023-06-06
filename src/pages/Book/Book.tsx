@@ -1,9 +1,9 @@
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { getBooksByName } from '../../services/Book-api'
-import { CharactersTable } from '../../components/Characters-table'
-import { BookArticle } from '../../components/Book-article'
-import { LoadingBookArticle } from '../../components/Loading-book-article'
+import { CharactersTable } from '../../components/Characters-table/Characters-table'
+import { BookArticle } from '../../components/Book-article/Book-article'
+import { LoadingBookArticle } from '../../components/Loading-book-article/Loading-book-article'
 
 export const Book = () => {
   const params = useParams()

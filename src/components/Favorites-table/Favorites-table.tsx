@@ -6,7 +6,6 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   PaginationState,
-  FilterFn,
   ColumnFiltersState,
   getSortedRowModel,
   getFacetedRowModel,
@@ -21,34 +20,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { StoreReducer } from '../../redux/store'
 import { FcLike } from 'react-icons/fc'
 import { useEffect, useMemo, useState } from 'react'
-import { LoadingBookTable } from '../Loading-book-table'
-import { RankingInfo, rankItem } from '@tanstack/match-sorter-utils'
+import { LoadingBookTable } from '../Loading-book-table/Loading-book-table'
 import { Filter } from '../../utils/Filter'
 import { motion } from 'framer-motion'
 import { StateModal } from '../../models'
-import { ModalFavorites } from '../Modal-Favorites'
-
-declare module '@tanstack/table-core' {
-  interface FilterFns {
-    fuzzy: FilterFn<Book>
-  }
-  interface FilterMeta {
-    itemRank: RankingInfo
-  }
-}
-
-const fuzzyFilter: FilterFn<Book> = (row, columnId, value, addMeta) => {
-  // Rank the item
-  const itemRank = rankItem(row.getValue(columnId), value)
-
-  // Store the itemRank info
-  addMeta({
-    itemRank,
-  })
-
-  // Return if the item should be filtered in/out
-  return itemRank.passed
-}
+import { ModalFavorites } from '../Modal-Favorites/Modal-favorites'
+import { fuzzyFilter } from '../../hooks/fuzzyFilter'
 
 export const FavoritesTable = () => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])

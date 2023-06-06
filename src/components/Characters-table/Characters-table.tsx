@@ -11,42 +11,18 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFacetedMinMaxValues,
-  FilterFn,
   ColumnFiltersState,
 } from '@tanstack/react-table'
 import { useEffect, useMemo, useState } from 'react'
 import { Character } from '../../models/ICharacter'
 import { getCharacter } from '../../services/Characters-api/Characters-api'
 import { LoadingCharacterTable } from '../Loading-character-table/Loading-character-table'
-import { Book } from '../../models'
-import { RankingInfo, rankItem } from '@tanstack/match-sorter-utils'
 import { Filter } from '../../utils/Filter'
 import { motion } from 'framer-motion'
+import { fuzzyFilter } from '../../hooks/fuzzyFilter'
 
 export interface Props {
   data: string[]
-}
-
-declare module '@tanstack/table-core' {
-  interface FilterFns {
-    fuzzy: FilterFn<Book>
-  }
-  interface FilterMeta {
-    itemRank: RankingInfo
-  }
-}
-
-const fuzzyFilter: FilterFn<Book> = (row, columnId, value, addMeta) => {
-  // Rank the item
-  const itemRank = rankItem(row.getValue(columnId), value)
-
-  // Store the itemRank info
-  addMeta({
-    itemRank,
-  })
-
-  // Return if the item should be filtered in/out
-  return itemRank.passed
 }
 
 export const CharactersTable = ({ data }: Props): JSX.Element => {

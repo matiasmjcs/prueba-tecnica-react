@@ -3,12 +3,15 @@ import * as Yup from 'yup'
 import { useState } from 'react'
 import { ModalSuccess } from '../Modal-success/Modal-success'
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 
 export const AddBookForm: React.FC = () => {
+  const navigate = useNavigate()
   const [isOpen, setIsOpen] = useState(false)
 
   function closeModal() {
     setIsOpen(false)
+    navigate('/')
   }
 
   function openModal() {
@@ -37,11 +40,7 @@ export const AddBookForm: React.FC = () => {
     initialValues: initial,
     validateOnChange: false,
     validationSchema: Yup.object(validation()),
-    onSubmit: (data) => {
-      console.log(data.title)
-      console.log(data.author)
-      console.log(data.genre)
-      console.log(data.publicationDate)
+    onSubmit: () => {
       openModal()
     },
   })

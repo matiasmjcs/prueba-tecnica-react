@@ -19,6 +19,7 @@
     "@tanstack/match-sorter-utils": "^8.8.4",
     "@tanstack/react-query": "^4.29.12",
     "@tanstack/react-table": "^8.9.1",
+    "@testing-library/jest-dom": "^5.16.5",
     "@types/jest": "^29.5.2",
     "@types/react-table": "^7.7.14",
     "antd": "^5.5.2",

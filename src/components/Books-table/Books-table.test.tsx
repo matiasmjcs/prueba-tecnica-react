@@ -2,12 +2,12 @@ import { render } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { store } from '../../redux/store'
-import { BooksTable } from '.'
+import { BooksTable } from './Book-table'
 
 const queryClient = new QueryClient()
 
-it('renders the Book Table component', () => {
-  try {
+describe('BooksTable', () => {
+  it('renders BoosTable', () => {
     render(
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
@@ -15,7 +15,5 @@ it('renders the Book Table component', () => {
         </QueryClientProvider>
       </Provider>
     )
-  } catch (error) {
-    console.error(error)
-  }
+  })
 })

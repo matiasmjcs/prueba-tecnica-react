@@ -1,10 +1,24 @@
 import { render } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import MockData from './MockBook.json'
 import axios, { AxiosResponse } from 'axios'
-import { BookArticle } from '.'
+import { BookArticle } from './Book-article'
+import { Book } from '../../models'
 
 const queryClient = new QueryClient()
+
+const MockData: Book = {
+  url: 'https://example.com/book',
+  name: 'Nombre del libro',
+  isbn: '1234567890',
+  authors: 'Autor 2',
+  numberOfPages: 200,
+  publisher: 'Editorial',
+  country: 'País',
+  mediaType: 'Tipo de medio',
+  released: '2022-01-01',
+  characters: ['Personaje 1', 'Personaje 2'],
+  povCharacters: ['Personaje 1'],
+}
 
 it('renders Book article', async () => {
   jest.spyOn(axios, 'get').mockResolvedValueOnce({
@@ -13,7 +27,7 @@ it('renders Book article', async () => {
 
   render(
     <QueryClientProvider client={queryClient}>
-      {MockData && <BookArticle data={MockData} />}
+      <BookArticle data={MockData} />
     </QueryClientProvider>
   )
 })
