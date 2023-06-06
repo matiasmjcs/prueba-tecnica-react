@@ -1,3 +1,4 @@
+import { expect } from '@storybook/jest'
 import { ModalFavorites } from './Modal-favorites'
 import { StoryFn, Meta } from '@storybook/react'
 import { StateModal } from '../../models'
@@ -12,3 +13,8 @@ const Template: StoryFn = () => (
 )
 
 export const Default = Template.bind({})
+Default.play = async ({ canvasElement, title, component }) => {
+  expect(canvasElement).toBeInTheDocument
+  await expect(title).toBe('Components/ModalFavoritesError')
+  await expect(component).toBeInTheDocument
+}

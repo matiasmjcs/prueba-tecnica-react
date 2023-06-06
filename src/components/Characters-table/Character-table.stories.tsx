@@ -4,6 +4,7 @@ import { store } from '../../redux/store'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
+import { expect } from '@storybook/jest'
 
 export default {
   title: 'Components/CharactersTable',
@@ -37,4 +38,10 @@ Default.args = {
     'https://anapioficeandfire.com/api/characters/40',
     'https://anapioficeandfire.com/api/characters/41',
   ],
+}
+
+Default.play = async ({ canvasElement, title, component }) => {
+  expect(canvasElement).toBeInTheDocument
+  await expect(title).toBe('Components/CharactersTable')
+  await expect(component).toBeInTheDocument
 }

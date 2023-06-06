@@ -27,12 +27,10 @@ export const AddBookForm: React.FC = () => {
 
   const validation = () => {
     return {
-      title: Yup.string().required('El Titulo es obligatorio'),
-      author: Yup.string().required('El author es obligatorio'),
-      genre: Yup.string().required('El Genero es obligatorio'),
-      publicationDate: Yup.date().required(
-        'La fecha de publicación es obligatoria'
-      ),
+      title: Yup.string().required('Title is required'),
+      author: Yup.string().required('The author is required'),
+      genre: Yup.string().required('gender is required'),
+      publicationDate: Yup.date().required('The publication date is mandatory'),
     }
   }
 
@@ -54,14 +52,14 @@ export const AddBookForm: React.FC = () => {
         className="max-w-md mx-auto bg-slate-950 mt-10 text-sm shadow-md rounded-lg px-8 pt-6 pb-8 mb-4"
       >
         <h2 className="text-2xl text-gray-200 font-bold mb-6">
-          Crear nuevo libro
+          create new book
         </h2>
         <div className="mb-4">
           <label
             className="block text-start text-white text-sm font-bold mb-2"
             htmlFor="title"
           >
-            Título
+            Tittle
           </label>
           <p className="text-start text-red-500 text-xs">
             {formik.errors.title}
@@ -79,7 +77,7 @@ export const AddBookForm: React.FC = () => {
             className="block text-start text-white text-sm font-bold mb-2"
             htmlFor="author"
           >
-            Autor
+            Author
           </label>
           <p className="text-start text-red-500 text-xs">
             {formik.errors.author}
@@ -98,7 +96,7 @@ export const AddBookForm: React.FC = () => {
             className="block text-start text-white text-sm font-bold mb-2"
             htmlFor="genre"
           >
-            Género
+            Gender
           </label>
           <p className="text-start text-red-500 text-xs">
             {formik.errors.genre}
@@ -117,7 +115,7 @@ export const AddBookForm: React.FC = () => {
             className="block text-start text-white text-sm font-bold mb-2"
             htmlFor="publicationDate"
           >
-            Fecha de publicación
+            Publication date
           </label>
           <p className=" text-start text-red-500 text-xs">
             {formik.errors.publicationDate}
@@ -138,7 +136,7 @@ export const AddBookForm: React.FC = () => {
           onClick={() => formik.handleSubmit()}
           className="bg-slate-700 text-white py-2 px-4 rounded transition-colors duration-300"
         >
-          Enviar
+          Add Book
         </button>
       </motion.form>
     </>

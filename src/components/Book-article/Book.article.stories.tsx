@@ -1,5 +1,6 @@
 import { StoryFn, Meta } from '@storybook/react'
 import { BookArticle, Props } from './Book-article'
+import { expect } from '@storybook/jest'
 
 export default {
   title: 'Components/BookArticle',
@@ -23,4 +24,12 @@ Default.args = {
     mediaType: 'Paperback',
     povCharacters: [],
   },
+}
+Default.play = async ({ canvasElement }) => {
+  expect(canvasElement).toBeInTheDocument
+  await expect(canvasElement).toHaveTextContent('Example Book')
+  await expect(canvasElement).toHaveTextContent('John Doe')
+  await expect(canvasElement).toHaveTextContent('2023-06-01')
+  await expect(canvasElement).toHaveTextContent('Example Country')
+  await expect(canvasElement).toHaveTextContent('Example Publisher')
 }

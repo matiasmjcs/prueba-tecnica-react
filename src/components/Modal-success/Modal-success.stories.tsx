@@ -1,3 +1,4 @@
+import { expect } from '@storybook/jest'
 import { ModalSuccess } from './Modal-success'
 import { StoryFn, Meta } from '@storybook/react'
 import { useState } from 'react'
@@ -16,3 +17,8 @@ const Template: StoryFn = () => {
 }
 
 export const Default = Template.bind({})
+Default.play = async ({ canvasElement, title, component }) => {
+  expect(canvasElement).toBeInTheDocument
+  await expect(title).toBe('Components/ModalSuccess')
+  await expect(component).toBeInTheDocument
+}

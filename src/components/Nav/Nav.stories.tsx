@@ -1,3 +1,4 @@
+import { expect } from '@storybook/jest'
 import { BrowserRouter } from 'react-router-dom'
 import { Nav } from './Nav'
 import { StoryFn, Meta } from '@storybook/react'
@@ -15,3 +16,8 @@ const Template: StoryFn = () => {
 }
 
 export const Default = Template.bind({})
+Default.play = async ({ canvasElement, title, component }) => {
+  expect(canvasElement).toBeInTheDocument
+  await expect(title).toBe('Components/Nav')
+  await expect(component).toBeInTheDocument
+}

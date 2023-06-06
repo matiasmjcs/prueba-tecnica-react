@@ -183,6 +183,7 @@ export const BooksTable = (): JSX.Element => {
         <ModalFavorites _type={StateModal.Error} text={`${modalText}`} />
       )}
       <motion.div
+        id="div-padre"
         initial={{ scale: 1, opacity: 0 }}
         animate={{ scale: 1, opacity: 1, transition: { duration: 0.8 } }}
         style={{ minHeight: 350 }}
