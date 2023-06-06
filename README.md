@@ -54,7 +54,7 @@ Si deseas generar una versión compilada de Storybook para desplegarla en un ent
 
 Esto generará los archivos estáticos optimizados de Storybook en la carpeta storybook-static. Puedes desplegar esta carpeta en un servidor web estático para compartir y documentar tus componentes.
 
-##Contribución
+## Contribución
 
 Si deseas contribuir a este proyecto, siéntete libre de hacer un fork y enviar tus pull requests. Apreciamos tus contribuciones.
 
